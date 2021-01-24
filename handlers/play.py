@@ -7,7 +7,7 @@ import requests
 import player
 import db
 from helpers import wrap
-from config import SUDO_FILTER, LOG_GROUP, LOG_GROUP_FILTER
+from config import SUDO_USERS, SUDO_FILTER, LOG_GROUP, LOG_GROUP_FILTER
 from strings import get_string as _
 
 
@@ -21,7 +21,10 @@ def message(client, message):
         message.reply_text(_("play_1"))
         return
 
-    if "list=" in message.text:
+    if (
+        "list=" in message.text
+            and message.from_user.id not in SUDO_USERS
+    ):
         message.reply_text(_("play_2"))
         return
 
@@ -171,10 +174,12 @@ def playlist(client, message):
     _all = ""
 
     for i in range(len(all_)):
-        _all += str(i + 1) + ". " + all_[i]["title"] + ": " + all_[i]["url"] + "\n"
+        _all += str(i + 1) + ". " + \
+            all_[i]["title"] + ": " + all_[i]["url"] + "\n"
 
     if len(_all) < 4096:
-        message.reply_text(_all, parse_mode=None, disable_web_page_preview=True)
+        message.reply_text(_all, parse_mode=None,
+                           disable_web_page_preview=True)
     else:
         message.reply_text(
             "https://nekobin.com/"

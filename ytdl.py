@@ -28,10 +28,24 @@ def worker():
 
             file_name = ""
 
+            if "list=" in item["video"]:
+                info = ydl.extract_info(item["video"], download=False)
+
+                for i in info["entries"]:
+                    i_ = item
+                    i_["video"] = "http://youtu.be/" + i_["id"]
+                    q.put(
+                        i_
+                    )
+
+                q.task_done()
+                continue
+
             info = ydl.extract_info(item["video"], download=False)
 
             if (
-                int(info["duration"] / 60) > DUR_LIMIT
+                DUR_LIMIT != -1
+                and int(info["duration"] / 60) > DUR_LIMIT
                 and item["play_function"][1][5] not in SUDO_USERS
             ):
                 if "on_duration_limit" in item:
