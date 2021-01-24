@@ -28,7 +28,7 @@ If you face an error, want to discuss this project or get support for it, join [
 
 #### Cloning
 ```
-    git clone https://github.com/rojserbest/VoiceChatPyroBot.git vcbot && cd vcbot
+    git clone https://github.com/rojserbest/vcpb.git vcpb && cd vcpb
 ```
 
 #### Configuring
