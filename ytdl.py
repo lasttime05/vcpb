@@ -6,18 +6,11 @@ if "downloads" not in os.listdir():
 import threading
 import queue
 import requests
-import youtube_dl
 import player
 from config import DUR_LIMIT, SUDO_USERS
-from helpers import format_duration, generate_image
+from helpers import ydl, format_duration, generate_image
 
-ydl_opts = {
-    "format": "bestaudio/best",
-    "geo-bypass": True,
-    "nocheckcertificate": True,
-    "outtmpl": "downloads/%(id)s.%(ext)s",
-}
-ydl = youtube_dl.YoutubeDL(ydl_opts)
+
 q = queue.Queue()
 
 
@@ -27,19 +20,6 @@ def worker():
             item = q.get()
 
             file_name = ""
-
-            if "list=" in item["video"]:
-                info = ydl.extract_info(item["video"], download=False)
-
-                for i in info["entries"]:
-                    i_ = item
-                    i_["video"] = "http://youtu.be/" + i["id"]
-                    q.put(
-                        i_
-                    )
-
-                q.task_done()
-                continue
 
             info = ydl.extract_info(item["video"], download=False)
 

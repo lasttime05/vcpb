@@ -44,6 +44,7 @@ ban_8: "Banned users:"
 play_1: "This (link) is not valid."
 play_2: "Send me a video URL, not a playlist."
 play_3: "Download scheduled."
+play_4: "Starting to play this playlist..."
 
 # Player
 player_1: "Playing..."

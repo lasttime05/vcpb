@@ -6,12 +6,17 @@ from ytdl import download
 import requests
 import player
 import db
-from helpers import wrap
+from helpers import wrap, ydl
 from config import SUDO_USERS, SUDO_FILTER, LOG_GROUP, LOG_GROUP_FILTER
 from strings import get_string as _
 
 
-@Client.on_message(filters.text & filters.private & ~filters.regex(r"^x .+"), group=2)
+@Client.on_message(
+    filters.text & filters.private & ~ (
+        filters.regex(r"^x .+") | filters.edited
+    ),
+    group=2
+)
 @wrap
 def message(client, message):
     if message.text.startswith("/"):
@@ -21,12 +26,73 @@ def message(client, message):
         message.reply_text(_("play_1"))
         return
 
-    if (
-        "list=" in message.text
-            and message.from_user.id not in SUDO_USERS
-    ):
-        message.reply_text(_("play_2"))
-        return
+    if "list=" in message.text:
+        if message.from_user.id not in SUDO_USERS:
+            message.reply_text(_("play_2"))
+            return
+        else:
+            info = ydl.extract_info(message.text, False)
+
+            for item in info:
+                message.reply_text(
+                    _("play_4")
+                )
+                download(
+                    None,
+                    None,
+                    [
+                        player.play,
+                        [
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            message.from_user.id,
+                            message.from_user.first_name,
+                            [
+                                client.send_photo,
+                                [
+                                    LOG_GROUP,
+                                    None,
+                                    _("group_1").format(
+                                        '<a href="{}">{}</a>',
+                                        "{}",
+                                        '<a href="tg://user?id={}">{}</a>',
+                                    ),
+                                    "HTML",
+                                    None,
+                                    None,
+                                    True,
+                                    None,
+                                    None,
+                                    InlineKeyboardMarkup(
+                                        [
+                                            [
+                                                InlineKeyboardButton(
+                                                    _("playlist_3"), "add_to_playlist"
+                                                ),
+                                            ],
+                                        ]
+                                    ),
+                                ],
+                            ]
+                            if LOG_GROUP
+                            else None,
+                            None,
+                            None,
+                        ],
+                    ],
+                    (m.edit, (_("ytdl_3"),)),
+                    "http://youtu.be/" + item["id"],
+                    (m.edit, (_("error"),)),
+                    [
+                        m.edit,
+                        [
+                            _("ytdl_4"),
+                        ],
+                    ],
+                )
 
     m = message.reply_text(_("play_3"), quote=True)
 

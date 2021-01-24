@@ -1,8 +1,19 @@
 import os
 import re
 from pyrogram.errors import exceptions
+import youtube_dl
 from PIL import Image, ImageDraw, ImageFont
 from config import GROUP, USERS_MUST_JOIN
+
+
+ydl = youtube_dl.YoutubeDL(
+    {
+        "format": "bestaudio/best",
+        "geo-bypass": True,
+        "nocheckcertificate": True,
+        "outtmpl": "downloads/%(id)s.%(ext)s",
+    }
+)
 
 
 class State():
@@ -61,10 +72,12 @@ def wrap(func):
         return func(client, message)
     return wrapper
 
+
 def generate_image(
     thumbnail: str, title: str, requester: str
 ) -> str:
-    title, requester = (title if len(title) <= 18 else (title[:18] + "...")), (requester if len(requester) <= 13 else (requester[:13] + "..."))
+    title, requester = (title if len(title) <= 18 else (
+        title[:18] + "...")), (requester if len(requester) <= 13 else (requester[:13] + "..."))
     out = thumbnail.split("/")[0] + "/out" + thumbnail.split("/")[1]
     background = Image.open("assets/png/background.png")
     thumbnail = Image.open(thumbnail).resize(background.size)
