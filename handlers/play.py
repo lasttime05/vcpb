@@ -83,15 +83,10 @@ def message(client, message):
                             None,
                         ],
                     ],
-                    (m.edit, (_("ytdl_3"),)),
+                    None,
                     "http://youtu.be/" + item["id"],
-                    (m.edit, (_("error"),)),
-                    [
-                        m.edit,
-                        [
-                            _("ytdl_4"),
-                        ],
-                    ],
+                    None,
+                    None,
                 )
 
     m = message.reply_text(_("play_3"), quote=True)
