@@ -33,7 +33,7 @@ def worker():
 
                 for i in info["entries"]:
                     i_ = item
-                    i_["video"] = "http://youtu.be/" + i_["id"]
+                    i_["video"] = "http://youtu.be/" + i["id"]
                     q.put(
                         i_
                     )
